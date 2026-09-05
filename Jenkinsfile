@@ -51,20 +51,20 @@ pipeline {
                 sh "docker build -t calculadora-ci:${env.BUILD_NUMBER} ."
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Desplegando contenedor...'
-                sh 'docker rm -f calculadora-app || true'
-                sh "docker run -d --name calculadora-app -p 8081:8080 calculadora-ci:${env.BUILD_NUMBER}"
-            }
-        }
-        stage('Health Check') {
-            steps {
-                echo 'Verificando salud del despliegue...'
-                sh 'sleep 8'
-                sh 'curl -f http://localhost:8081/salud || curl -f http://host.docker.internal:8081/salud'
-            }
-        }
+ stage('Deploy') {
+    steps {
+        echo 'Desplegando contenedor...'
+        sh 'docker rm -f calculadora-app || true'
+        sh "docker run -d --name calculadora-app --network lab-devops_default -p 8081:8080 calculadora-ci:${env.BUILD_NUMBER}"
+    }
+}
+stage('Health Check') {
+    steps {
+        echo 'Verificando salud del despliegue...'
+        sh 'sleep 8'
+        sh 'curl -f http://calculadora-app:8080/salud'
+    }
+}
     }
     post {
         success {
