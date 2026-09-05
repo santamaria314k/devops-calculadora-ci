@@ -51,7 +51,7 @@ pipeline {
                 sh "docker build -t calculadora-ci:${env.BUILD_NUMBER} ."
             }
         }
- stage('Deploy') {
+        stage('Deploy') {
     steps {
         echo 'Desplegando contenedor...'
         sh 'docker rm -f calculadora-app || true'
